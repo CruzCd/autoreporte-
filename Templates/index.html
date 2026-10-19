@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoReporte — Excel a Reporte Profesional</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header class="hero">
+        <h1>AutoReporte</h1>
+        <p>Sube tu Excel desordenado. Descarga un reporte profesional.</p>
+    </header>
+
+    <main class="container">
+
+        <section class="card" id="zona-subida">
+            <h2>1. Sube tu archivo</h2>
+            <form id="form-archivo" enctype="multipart/form-data">
+                <label for="archivo" class="drop-zone" id="drop-zone">
+                    <span class="drop-icon">📄</span>
+                    <span class="drop-text">Arrastra tu Excel aquí o haz clic para elegir</span>
+                    <span class="drop-hint">.xlsx, .xls o .csv — máximo 16 MB</span>
+                    <input type="file" id="archivo" name="archivo" accept=".xlsx,.xls,.csv" hidden>
+                </label>
+                <p id="nombre-archivo" class="file-name"></p>
+                <button type="submit" id="btn-procesar" class="btn" disabled>
+                    Procesar archivo
+                </button>
+            </form>
+        </section>
+
+        <section class="card hidden" id="zona-carga">
+            <div class="loader"></div>
+            <p>Procesando tu archivo...</p>
+        </section>
+
+        <section class="card hidden" id="zona-resultado">
+            <h2>2. Tu reporte está listo</h2>
+            <div id="resumen-datos"></div>
+            <a href="#" id="btn-descargar" class="btn">⬇ Descargar reporte</a>
+        </section>
+
+        <section class="card hidden" id="zona-error">
+            <h2>❌ Error</h2>
+            <p id="mensaje-error"></p>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>AutoReporte — automatización de reportes con Python</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
