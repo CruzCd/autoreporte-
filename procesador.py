@@ -5,7 +5,6 @@ from openpyxl.utils import get_column_letter
 from openpyxl.chart import BarChart, Reference
 import io
 from datetime import datetime
-import os
 import requests
 import gc
 
@@ -17,23 +16,16 @@ def limpiar_datos(df):
     return df
 
 def generar_resumen(df):
-    resumen = {
-        'filas': int(len(df)),
-        'columnas': int(len(df.columns)),
-        'numericas': []
-    }
+    resumen = {'filas': int(len(df)), 'columnas': int(len(df.columns)), 'numericas': []}
     for col in df.select_dtypes(include='number').columns:
         resumen['numericas'].append({
-            'columna': str(col),
-            'suma': float(df[col].sum()),
-            'promedio': float(df[col].mean()),
-            'maximo': float(df[col].max()),
+            'columna': str(col), 'suma': float(df[col].sum()),
+            'promedio': float(df[col].mean()), 'maximo': float(df[col].max()),
             'minimo': float(df[col].min()),
         })
     return resumen
 
 def generar_analisis_llm(resumen):
-    # Pollinations AI no requiere API Key
     datos_texto = f"Filas: {resumen['filas']}, Columnas: {resumen['columnas']}. "
     for item in resumen.get('numericas', []):
         datos_texto += f"Columna '{item['columna']}': Suma={item['suma']:.2f}, Promedio={item['promedio']:.2f}, Máximo={item['maximo']:.2f}, Mínimo={item['minimo']:.2f}. "
@@ -47,7 +39,7 @@ def generar_analisis_llm(resumen):
 
     try:
         response = requests.post(
-            "https://text.pollinations.ai/openai",
+            "https://gen.pollinations.ai/v1/chat/completions",
             json={
                 "model": "openai",
                 "messages": [{"role": "user", "content": prompt}],
@@ -77,7 +69,6 @@ def generar_excel_reporte(df_limpio, resumen):
     ws['B4'] = resumen['filas']
     ws['A5'] = "Total de columnas:"
     ws['B5'] = resumen['columnas']
-    
     row = 7
     if resumen['numericas']:
         encabezados = ["Columna", "Suma", "Promedio", "Máximo", "Mínimo"]
@@ -94,7 +85,6 @@ def generar_excel_reporte(df_limpio, resumen):
             ws.cell(row=row, column=5, value=round(item['minimo'], 2))
     for c in range(1, 6):
         ws.column_dimensions[get_column_letter(c)].width = 18
-
     ws2 = wb.create_sheet("Datos limpios")
     for c_idx, col_name in enumerate(df_limpio.columns, start=1):
         cell = ws2.cell(row=1, column=c_idx, value=col_name)
@@ -105,7 +95,6 @@ def generar_excel_reporte(df_limpio, resumen):
             ws2.cell(row=r_idx, column=c_idx, value=value)
     for c in range(1, len(df_limpio.columns) + 1):
         ws2.column_dimensions[get_column_letter(c)].width = 18
-
     if resumen['numericas']:
         col_texto = df_limpio.select_dtypes(include='object').columns
         if len(col_texto) > 0:
@@ -135,13 +124,10 @@ def procesar_archivo(file_stream, filename):
         df = pd.read_csv(file_stream)
     else:
         df = pd.read_excel(file_stream)
-    
     df_limpio = limpiar_datos(df)
     resumen = generar_resumen(df_limpio)
     reporte = generar_excel_reporte(df_limpio, resumen)
-    
     del df
     del df_limpio
     gc.collect()
-    
     return reporte, resumen

@@ -135,23 +135,3 @@ body {
     color: #64748b;
     font-size: 0.9rem;
 }
-.analisis-ia {
-    background: #1e293b;
-    border-left: 4px solid #3b82f6;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 8px;
-    color: #e2e8f0;
-    text-align: left;
-}
-.analisis-ia h3 {
-    margin-bottom: 10px;
-    color: #3b82f6;
-    font-size: 1.1rem;
-}
-.analisis-ia p {
-    margin-bottom: 10px;
-    line-height: 1.5;
-    font-size: 0.95rem;
-}
-
