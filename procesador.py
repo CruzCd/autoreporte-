@@ -38,8 +38,9 @@ def generar_analisis_llm(resumen):
     Análisis:"""
 
     try:
+        # Endpoint público gratuito de Pollinations (No requiere API Key)
         response = requests.post(
-            "https://gen.pollinations.ai/v1/chat/completions",
+            "https://text.pollinations.ai/openai",
             json={
                 "model": "openai",
                 "messages": [{"role": "user", "content": prompt}],
@@ -51,7 +52,7 @@ def generar_analisis_llm(resumen):
         data = response.json()
         return data["choices"][0]["message"]["content"]
     except Exception as e:
-        print(f"Error al llamar a Pollinations AI: {e}")
+        print(f"Error en Pollinations AI: {e}")
         return "No se pudo generar el análisis automático en este momento."
 
 def generar_excel_reporte(df_limpio, resumen):
